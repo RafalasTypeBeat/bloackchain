@@ -1,15 +1,4 @@
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <cmath>
-#include <bitset>
-#include <vector>
-#include <algorithm>
-#include <iomanip>
-#include <fstream>
-#include <chrono>
-
-using namespace std;
+#include "header.h"
 
 string toBinary(int x);
 string convert(string input);
