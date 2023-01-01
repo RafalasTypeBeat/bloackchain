@@ -1,23 +1,42 @@
 #include "blockchain.h"
 #include "hash.cpp"
 
-long Blockchain::get_current_time() {
-    auto now = chrono::system_clock::now();
-    auto now_s = chrono::time_point_cast<chrono::seconds>(now);
-    auto epoch = now_s.time_since_epoch();
-    auto epoch_value = chrono::duration_cast<chrono::seconds>(epoch);
-    long epoch_time = epoch_value.count();
-    return epoch_time;
-    // gets current time
-}
-
-void Blockchain::create_transaction(const string& from, const string& to, const int& amount)
+bool Blockchain::generate_first_block() 
 {
-  long current_time = get_current_time();
+  if (blockchain_height != 0)
+  {
+    cout << "First block is already created!" << endl;
+    return false;
+  }
 
-  string hashed_data = from + to + to_string(amount) + to_string(current_time);
-  string transaction_id = convert(hashed_data);
-  transaction new_transacion {transaction_id, from, to, amount, current_time};
-  generated_transactions.push_back(new_transacion);
+  vector<user> users;
+  users = generated_users;
+  long unsigned int seed = get_current_time();
+  mt.seed(seed);
+  uniform_int_distribution<int> amount_distribution(1000, 10000);
+
+  for (user i:users)
+  {
+    string from = "Coinbase";
+    string to = i.public_key;
+    int amount = amount_distribution(mt);
+    long time = get_current_time();
+    string hashed_data = from + to + to_string(amount) + to_string(time);
+    string transaction_id = convert(hashed_data);
+
+    vector<txo> input;
+    vector<txo> output;
+
+    txo tx_output;
+    tx_output.transaction_id = transaction_id;
+    tx_output.to = to;
+    tx_output.amount = amount;
+    output.push_back(tx_output);
+
+    transaction new_transaction {transaction_id, from, to, amount, time, input, output};
+    generated_transactions[new_transaction.id] = new_transaction;
+  }
+  
 }
+
 

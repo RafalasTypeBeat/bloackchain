@@ -64,5 +64,10 @@ class Blockchain
   private:
     vector<user> generated_users;
     vector<transaction> generated_transactions;
+    std::mt19937 mt;
+    string version = "v1";
+    int difficulity_target = 1;
+    int blockchain_height = 0;
     long get_current_time();
+    bool generate_first_block();
 };
