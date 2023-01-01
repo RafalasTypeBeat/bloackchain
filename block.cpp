@@ -1,16 +1,21 @@
-#include "block.h"
+#include "blockchain.h"
+#include "hash.cpp"
 
-Block::Block(int indx, TransactionData t, string prevHash)
-{
-  index = indx;
-  data = t;
-  previousHash = prevHash;
-  blockHash = generateHash();
+long Blockchain::get_current_time() {
+    auto now = chrono::system_clock::now();
+    auto now_s = chrono::time_point_cast<chrono::seconds>(now);
+    auto epoch = now_s.time_since_epoch();
+    auto epoch_value = chrono::duration_cast<chrono::seconds>(epoch);
+    long epoch_time = epoch_value.count();
+    return epoch_time;
+    // gets current time
 }
 
-string Block::generateHash()
-{
-  hash<string> hash1;
-  hash<string> hash2;
-  hash<string> hash3;
+void Blockchain::create_user(const string& name) {
+    long current_time = get_current_time();
+    string val_to_hash = name + to_string(current_time);
+    string public_key = hashing(val_to_hash);
+    user new_user {name, public_key, current_time};
+
+    generated_users.push_back(new_user);
 }

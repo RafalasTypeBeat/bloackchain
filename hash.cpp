@@ -1,4 +1,4 @@
-#include "header.h"
+#include "blockchain.h"
 
 string toBinary(int x);
 string convert(string input);
@@ -47,53 +47,9 @@ const string sha256_k[64] =
         "10010000101111101111111111111010", "10100100010100000110110011101011", "10111110111110011010001111110111", "11000110011100010111100011110010", 
         };
 
-int main(int argc, char* argv[])
+string hashing(string input)
 {
-  bool choice, type = 0;
-  string input = "";
-  if (argc > 1) 
-  {
-    type = 1;
-    read_file(argv[1], type);
-  }
-  else
-  {
-  cout << "Skaityti faila(1), ivesti(0): ";
-  cin >> choice;
-	if (choice) read_file(input, type);
-  else
-  {
-    cout << "Iveskite teksta: ";
-    getline(cin >> ws, input);
-    cout << "Sugeneruotas hash: "<< endl << convert(input);
-  }
-  }
-}
-
-void read_file(string input, bool type) 
-{
-  ifstream in;
-  if (type) in.open(input);
-  else
-  {
-    string pav;
-    cout << "Failo pavadinimas be .txt : " << endl;
-    cin >> pav;
-    in.open("./tests/" + pav + ".txt");
-  }
-  stringstream buffer;
-  buffer.clear();
-  if (in.is_open()) 
-  {
-    buffer << in.rdbuf();
-    input = buffer.str();
-    cout << "Sugeneruotas hash: "<< endl << convert(input);
-  } 
-  else 
-  {
-    cout << "Nepavyko atidaryti failo." << endl;
-    exit;
-  }
+	convert(input);
 }
 
 string toBinary(int x)

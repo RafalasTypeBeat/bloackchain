@@ -1,2 +1,2 @@
-#include "header.h"
-
+#include "hash.cpp"
+#include "blockchain.h"
