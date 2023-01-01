@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <string>
-#include <ctime>
 #include <iostream>
 #include <sstream>
 #include <cmath>
@@ -11,6 +10,8 @@
 #include <iomanip>
 #include <fstream>
 #include <chrono>
+#include <random>
+#include <ctime>
 
 using namespace std;
 
