@@ -20,12 +20,10 @@ using namespace std;
 class Blockchain
 {
   public:
-    Blockchain(); //constructor
-    ~Blockchain();
 
     struct txo 
     {
-        string transaction_id;
+        string txo_id;
         string to;
         int amount;
         bool unspent = true;
@@ -33,7 +31,7 @@ class Blockchain
 
     struct transaction 
     {
-        string id;
+        string transaction_id;
         string from;
         string to;
         int amount;
@@ -47,7 +45,7 @@ class Blockchain
         string name;
         string public_key;
         long time_created;
-        vector<string> utx_ids;
+        vector<txo> utxos;
     };
 
     struct block 
@@ -74,7 +72,7 @@ class Blockchain
     string version = "v1";
     int difficulity_target = 1;
     int blockchain_height = 0;
-    void generate_starting_balances();
+    txo generate_starting_balances(const string& user_name);
     long get_current_time();
     bool generate_first_block();
 };
