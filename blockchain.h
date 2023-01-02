@@ -23,7 +23,7 @@ class Blockchain
 
     struct txo 
     {
-        string txo_id;
+        string transaction_id;
         string to;
         int amount;
         bool unspent = true;
@@ -31,7 +31,7 @@ class Blockchain
 
     struct transaction 
     {
-        string transaction_id;
+        string id;
         string from;
         string to;
         int amount;
@@ -45,7 +45,7 @@ class Blockchain
         string name;
         string public_key;
         long time_created;
-        vector<txo> utxos;
+        vector<string> utx_ids;
     };
 
     struct block 
@@ -68,11 +68,12 @@ class Blockchain
   private:
     vector<user> generated_users;
     vector<transaction> generated_transactions;
+    vector<transaction> coinbase_transactions;
     std::mt19937 mt;
     string version = "v1";
     int difficulity_target = 1;
     int blockchain_height = 0;
-    txo generate_starting_balances(const string& user_name);
+    void generate_starting_balances();
     long get_current_time();
     bool generate_first_block();
 };
