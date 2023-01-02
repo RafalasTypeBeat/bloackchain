@@ -33,12 +33,22 @@ bool Blockchain::generate_first_block()
     output.push_back(tx_output);
 
     transaction new_transaction {transaction_id, from, to, amount, time, input, output};
-    coinbase_transactions.push_back(new_transaction);
+    coinbase_transactions.push_back(new_transaction.id);
     i.utx_ids.push_back(transaction_id);
   }
   string prev_block_hash = convert("first_block");
   long time = get_current_time();
+  vector<string> tx_ids;
   
+  string merkleroot = get_merkleroot(coinbase_transactions);
+  block first_block;
+  first_block.height = blockchain_height;
+  first_block.prev_block_hash = prev_block_hash;
+  first_block.time = time;
+  first_block.version = version;
+  first_block.merkleroot = merkleroot;
+  first_block.difficulity_target = difficulity_target;
+  first_block.tx = coinbase_transactions;
   return true;
 }
 

@@ -8,3 +8,13 @@ long Blockchain::get_current_time() {
     long epoch_time = epoch_value.count();
     return epoch_time;
 }
+
+string Blockchain::get_merkleroot(vector<string> transactions)
+{
+    int size = transactions.size();
+    if (size == 0)
+    {
+        return convert("");
+    }
+    
+}

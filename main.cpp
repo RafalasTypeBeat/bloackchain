@@ -6,6 +6,7 @@ void generate_transactions(int n, Blockchain &new_bc);
 int main()
 {
   Blockchain new_bc;
+  generate_users(10, new_bc);
 }
 
 void generate_users(int n, Blockchain &new_bc)

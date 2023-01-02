@@ -68,7 +68,7 @@ class Blockchain
   private:
     vector<user> generated_users;
     vector<transaction> generated_transactions;
-    vector<transaction> coinbase_transactions;
+    vector<string> coinbase_transactions;
     std::mt19937 mt;
     string version = "v1";
     int difficulity_target = 1;
@@ -76,4 +76,5 @@ class Blockchain
     void generate_starting_balances();
     long get_current_time();
     bool generate_first_block();
+    string get_merkleroot(vector<string> transactions);
 };
