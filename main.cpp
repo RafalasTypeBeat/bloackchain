@@ -1,4 +1,3 @@
-#include "hash.cpp"
 #include "blockchain.h"
 
 void generate_users(int n, Blockchain &new_bc);
@@ -14,6 +13,7 @@ void generate_users(int n, Blockchain &new_bc)
   for (int i = 0; i < n; i++)
   {
     string name = "name" + to_string(i);
+    new_bc.create_user(name);
   }
   
 }

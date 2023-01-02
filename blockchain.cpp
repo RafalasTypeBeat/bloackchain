@@ -1,5 +1,4 @@
 #include "blockchain.h"
-#include "hash.cpp"
 
 long Blockchain::get_current_time() {
     auto now = chrono::system_clock::now();
@@ -8,5 +7,4 @@ long Blockchain::get_current_time() {
     auto epoch_value = chrono::duration_cast<chrono::seconds>(epoch);
     long epoch_time = epoch_value.count();
     return epoch_time;
-    // gets current time
 }

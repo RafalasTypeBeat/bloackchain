@@ -1,5 +1,4 @@
 #include "blockchain.h"
-#include "hash.cpp"
 
 bool Blockchain::generate_first_block() 
 {
@@ -29,14 +28,14 @@ bool Blockchain::generate_first_block()
 
     txo tx_output;
     tx_output.transaction_id = transaction_id;
-    tx_output.to = to;
+    tx_output.to = "to";
     tx_output.amount = amount;
     output.push_back(tx_output);
 
     transaction new_transaction {transaction_id, from, to, amount, time, input, output};
-    generated_transactions[new_transaction.id] = new_transaction;
+    generated_transactions.push_back(new_transaction);
   }
-  
+  return true;
 }
 
 

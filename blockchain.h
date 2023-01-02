@@ -13,6 +13,8 @@
 #include <random>
 #include <ctime>
 
+#include "hash.h"
+
 using namespace std;
 
 class Blockchain
@@ -21,14 +23,16 @@ class Blockchain
     Blockchain(); //constructor
     ~Blockchain();
 
-    struct txo {
+    struct txo 
+    {
         string transaction_id;
         string to;
         int amount;
         bool unspent = true;
-        };
+    };
 
-    struct transaction {
+    struct transaction 
+    {
         string id;
         string from;
         string to;
@@ -36,16 +40,18 @@ class Blockchain
         long time;
         vector<txo> in;
         vector<txo> out;
-        };
+    };
 
-    struct user {
+    struct user 
+    {
         string name;
         string public_key;
         long time_created;
         vector<string> utx_ids;
-        };
+    };
 
-    struct block {
+    struct block 
+    {
         string hash;
         int height;
         string prev_block_hash;
@@ -55,7 +61,7 @@ class Blockchain
         unsigned long long nonce;
         int difficulity_target;
         vector<string> tx;
-        };
+    };
 
     void create_user(const string& name);
     vector<user> get_users();
@@ -68,6 +74,7 @@ class Blockchain
     string version = "v1";
     int difficulity_target = 1;
     int blockchain_height = 0;
+    void generate_starting_balances();
     long get_current_time();
     bool generate_first_block();
 };
