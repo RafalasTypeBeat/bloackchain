@@ -22,3 +22,29 @@ vector<Blockchain::user> Blockchain::get_users()
 {
   return generated_users;
 }
+
+void Blockchain::print_users()
+{
+  cout << "Users:\n";
+  for (auto u : generated_users)
+  {
+    cout << u.name << '\n';
+    cout << u.public_key << '\n';
+    cout << u.time_created << '\n';
+    //cout << u.time_created << '\n';
+  }
+}
+
+void Blockchain::print_transactions()
+{
+  cout << "Transactions:\n";
+  for (auto t : generated_transactions)
+  {
+    cout << "Transaction id: "<< t.id << '\n';
+    cout << "From: "<< t.from << '\n';
+    cout << "To: "<< t.to << '\n';
+    cout << "Amount: "<< t.amount << '\n';
+    cout << "Transaction time: "<< t.time << '\n';
+    //cout << u.time_created << '\n';
+  }
+}

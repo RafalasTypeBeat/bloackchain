@@ -5,8 +5,12 @@ void generate_transactions(int n, Blockchain &new_bc);
 
 int main()
 {
+  cout<<"Starting blockchain...";
   Blockchain new_bc;
   generate_users(10, new_bc);
+  new_bc.print_users();
+  generate_transactions(10, new_bc);
+  new_bc.print_transactions();
 }
 
 void generate_users(int n, Blockchain &new_bc)

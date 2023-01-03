@@ -64,7 +64,8 @@ class Blockchain
     void create_user(const string& name);
     vector<user> get_users();
     void create_transaction(const string& from, const string& to, const int& amount);
-
+    void print_users();
+    void print_transactions();
   private:
     vector<user> generated_users;
     vector<transaction> generated_transactions;

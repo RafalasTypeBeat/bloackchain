@@ -11,10 +11,22 @@ long Blockchain::get_current_time() {
 
 string Blockchain::get_merkleroot(vector<string> transactions)
 {
-    int size = transactions.size();
-    if (size == 0)
-    {
-        return convert("");
-    }
-    
+   vector<string> temp;
+   int len = temp.size();
+   if (len == 1)
+   {
+        temp.push_back(transactions[0]);
+        return temp[0];
+   }
+   for (int i = 0; i < len - 1; i += 2)
+   {
+        string hashed_data = transactions[i] + transactions[i + 1];
+        temp.push_back(convert(hashed_data));
+   }
+   if (len % 2 == 1)
+   {
+        string hashed_data = transactions[len - 1] + transactions[len - 1];
+        temp.push_back(convert(hashed_data));
+   }
+   return get_merkleroot(temp);
 }
