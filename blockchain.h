@@ -66,7 +66,10 @@ class Blockchain
     void create_transaction(const string& from, const string& to, const int& amount);
     void print_users();
     void print_transactions();
+    void print_block(int block_id, Blockchain &new_bc);
+    block get_block(int block_height);
   private:
+    vector<block> blockchain;
     vector<user> generated_users;
     vector<transaction> generated_transactions;
     vector<string> coinbase_transactions;
