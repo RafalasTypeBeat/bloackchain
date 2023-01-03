@@ -1,13 +1,13 @@
 #include "blockchain.h"
 
-bool Blockchain::generate_first_block() 
+void Blockchain::generate_first_block() 
 {
   if (blockchain_height != 0)
   {
     cout << "First block is already created!" << endl;
-    return false;
   }
-
+  else {
+  cout << "Started generating first block\n";
   vector<user> users;
   users = generated_users;
   long unsigned int seed = get_current_time();
@@ -47,9 +47,42 @@ bool Blockchain::generate_first_block()
   first_block.time = time;
   first_block.version = version;
   first_block.merkleroot = merkleroot;
+  first_block.nonce = 0;
   first_block.difficulity_target = difficulity_target;
   first_block.tx = coinbase_transactions;
-  return true;
+  string hashed_data = to_string(blockchain_height) + prev_block_hash + to_string(time) + version
+  + merkleroot + to_string(first_block.nonce) + to_string(difficulity_target);
+  first_block.hash = convert(hashed_data);
+  blockchain.push_back(first_block);
+  cout << "Finished generating first block\n";
+  }
 }
 
+void Blockchain::print_block(int block_height)
+{
+    block chosen_block = get_block(block_height);
+    cout << "Printing block: " << chosen_block.height << '\n';
+    cout << "Block hash: " << chosen_block.hash << '\n';
+    cout << "Prev block hash: " << chosen_block.prev_block_hash << '\n';
+    cout << "Block creation time: " << chosen_block.time << '\n';
+    cout << "Block version: " << chosen_block.version << '\n';
+    cout << "Block merkleroot: " << chosen_block.merkleroot << '\n';
+    cout << "Block nonce: " << chosen_block.nonce << '\n';
+    cout << "Block difficulity target: " << chosen_block.difficulity_target << '\n';
+    cout << "Block transactions: " << chosen_block.difficulity_target << '\n';
+}
 
+Blockchain::block Blockchain::get_block(int block_height)
+{
+    if (block_height > blockchain_height)
+    {
+        cout << "No such block exists!";
+        return blockchain[0]; // change to latest block
+    }
+    auto it = find_if(blockchain.begin(), blockchain.end(), [&](const block& b)
+    {
+        return b.height == block_height;
+    });
+    block found_block = *it;
+    return found_block;
+}

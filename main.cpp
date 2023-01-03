@@ -11,6 +11,8 @@ int main()
   new_bc.print_users();
   generate_transactions(10, new_bc);
   new_bc.print_transactions();
+  new_bc.generate_first_block();
+  new_bc.print_block(0);
 }
 
 void generate_users(int n, Blockchain &new_bc)

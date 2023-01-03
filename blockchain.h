@@ -66,8 +66,9 @@ class Blockchain
     void create_transaction(const string& from, const string& to, const int& amount);
     void print_users();
     void print_transactions();
-    void print_block(int block_id, Blockchain &new_bc);
+    void print_block(int block_id);
     block get_block(int block_height);
+    void generate_first_block();
   private:
     vector<block> blockchain;
     vector<user> generated_users;
@@ -79,6 +80,5 @@ class Blockchain
     int blockchain_height = 0;
     void generate_starting_balances();
     long get_current_time();
-    bool generate_first_block();
     string get_merkleroot(vector<string> transactions);
 };
