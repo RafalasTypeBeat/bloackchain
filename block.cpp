@@ -13,7 +13,7 @@ void Blockchain::generate_first_block()
   long unsigned int seed = get_current_time();
   mt.seed(seed);
   uniform_int_distribution<int> amount_distribution(1000, 10000);
-
+  vector<string> coinbase_tx_ids;
   for (user i:users)
   {
     string from = "Coinbase";
@@ -33,14 +33,15 @@ void Blockchain::generate_first_block()
     output.push_back(tx_output);
 
     transaction new_transaction {transaction_id, from, to, amount, time, input, output};
-    coinbase_transactions.push_back(new_transaction.id);
+    coinbase_transactions.push_back(new_transaction);
+    coinbase_tx_ids.push_back(new_transaction.id);
     i.utx_ids.push_back(transaction_id);
   }
   string prev_block_hash = convert("first_block");
   long time = get_current_time();
   vector<string> tx_ids;
   
-  string merkleroot = get_merkleroot(coinbase_transactions);
+  string merkleroot = get_merkleroot(coinbase_tx_ids);
   block first_block;
   first_block.height = blockchain_height;
   first_block.prev_block_hash = prev_block_hash;
@@ -49,12 +50,13 @@ void Blockchain::generate_first_block()
   first_block.merkleroot = merkleroot;
   first_block.nonce = 0;
   first_block.difficulity_target = difficulity_target;
-  first_block.tx = coinbase_transactions;
+  first_block.tx = coinbase_tx_ids;
   string hashed_data = to_string(blockchain_height) + prev_block_hash + to_string(time) + version
   + merkleroot + to_string(first_block.nonce) + to_string(difficulity_target);
   first_block.hash = convert(hashed_data);
   blockchain.push_back(first_block);
   cout << "Finished generating first block\n";
+  blockchain_height ++;
   }
 }
 
@@ -69,7 +71,11 @@ void Blockchain::print_block(int block_height)
     cout << "Block merkleroot: " << chosen_block.merkleroot << '\n';
     cout << "Block nonce: " << chosen_block.nonce << '\n';
     cout << "Block difficulity target: " << chosen_block.difficulity_target << '\n';
-    cout << "Block transactions: " << chosen_block.difficulity_target << '\n';
+    // for (auto u : generated_users)
+    // {
+    //   cout << "User balances: " << chosen_block.difficulity_target << '\n';
+    // }
+    
 }
 
 Blockchain::block Blockchain::get_block(int block_height)
@@ -86,3 +92,52 @@ Blockchain::block Blockchain::get_block(int block_height)
     block found_block = *it;
     return found_block;
 }
+
+void Blockchain::create_new_block()
+{
+  if (blockchain_height == 0) 
+  {
+    generate_first_block();
+  }
+  block prev_block = get_best_block();
+  string prev_block_hash = prev_block.hash;
+  vector<string> tx = select_transactions();
+  block new_block;
+  new_block.height = blockchain_height + 1;
+  new_block.prev_block_hash = prev_block_hash;
+  new_block.time = get_current_time();
+  new_block.version = version;
+  new_block.merkleroot = get_merkleroot(tx);
+  new_block.difficulity_target = difficulity_target;
+  new_block.tx = tx;
+  mine_block(new_block);
+}
+
+Blockchain::block Blockchain::get_best_block() {
+    block best_block;
+    best_block = get_block(blockchain_height - 1);
+    return best_block;
+}
+
+void Blockchain::mine_block(block new_block)
+{
+  string target_hash;
+  string prev_hash = new_block.prev_block_hash;
+  string time_stamp = to_string(new_block.time);
+  string version = new_block.version;
+  string merkle_root = new_block.merkleroot;
+  string difficulity_target = to_string(new_block.difficulity_target);\
+  target_hash = prev_hash + time_stamp + version + merkle_root + difficulity_target;
+  cout << "Started mining...\n";
+  int nonce;
+  string check = "1";
+  for (int i = 0; check[0] != '0'; i++)
+  {
+    check = convert(target_hash + to_string(i));
+    cout << check << endl;
+    nonce = i;
+  }
+  cout << "Target hash: " << convert(target_hash + to_string(nonce)) << " nonce: " << nonce << '\n';
+}
+
+

@@ -12,6 +12,7 @@
 #include <chrono>
 #include <random>
 #include <ctime>
+#include <bits/stdc++.h>
 
 #include "hash.h"
 
@@ -69,16 +70,24 @@ class Blockchain
     void print_block(int block_id);
     block get_block(int block_height);
     void generate_first_block();
+    vector<string> select_transactions(); // perkelti i private
+    void create_new_block();
+    void mine_block(block new_block);
   private:
     vector<block> blockchain;
     vector<user> generated_users;
     vector<transaction> generated_transactions;
-    vector<string> coinbase_transactions;
+    vector<transaction> coinbase_transactions;
     std::mt19937 mt;
     string version = "v1";
     int difficulity_target = 1;
     int blockchain_height = 0;
+    int max_block_transactions = 100;
     void generate_starting_balances();
     long get_current_time();
     string get_merkleroot(vector<string> transactions);
+    vector<string> validate_transaction(vector<string> &tx);
+    block get_best_block();
+    int get_user_utx_amount(int &available_funds);
+    
 };

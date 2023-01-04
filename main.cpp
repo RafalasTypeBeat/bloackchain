@@ -5,14 +5,19 @@ void generate_transactions(int n, Blockchain &new_bc);
 
 int main()
 {
+  string user_input;
   cout<<"Starting blockchain...";
+  cout << "Comands:\n'Generate first block' - generates users with starting balanaces and random transactions. Puts starting balance utxos in first block and creats it";
+  cin >> user_input;
   Blockchain new_bc;
   generate_users(10, new_bc);
   new_bc.print_users();
-  generate_transactions(10, new_bc);
-  new_bc.print_transactions();
+  generate_transactions(1000, new_bc);
+  //new_bc.print_transactions();
   new_bc.generate_first_block();
   new_bc.print_block(0);
+  new_bc.create_new_block();
+  //new_bc.print_block(1);
 }
 
 void generate_users(int n, Blockchain &new_bc)
