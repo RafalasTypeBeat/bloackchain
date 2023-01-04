@@ -8,13 +8,12 @@ void Blockchain::generate_first_block()
   }
   else {
   cout << "Started generating first block\n";
-  vector<user> users;
-  users = generated_users;
   long unsigned int seed = get_current_time();
   mt.seed(seed);
   uniform_int_distribution<int> amount_distribution(1000, 10000);
   vector<string> coinbase_tx_ids;
-  for (user i:users)
+  vector<user>::iterator u_it = generated_users.begin();
+  for (user i:generated_users)
   {
     string from = "Coinbase";
     string to = i.public_key;
@@ -22,20 +21,19 @@ void Blockchain::generate_first_block()
     long time = get_current_time();
     string hashed_data = from + to + to_string(amount) + to_string(time);
     string transaction_id = convert(hashed_data);
-
     vector<txo> input;
     vector<txo> output;
-
     txo tx_output;
     tx_output.transaction_id = transaction_id;
     tx_output.to = to;
     tx_output.amount = amount;
     output.push_back(tx_output);
-
     transaction new_transaction {transaction_id, from, to, amount, time, input, output};
-    coinbase_transactions.push_back(new_transaction);
+    validated_transactions.push_back(new_transaction);
     coinbase_tx_ids.push_back(new_transaction.id);
     i.utx_ids.push_back(transaction_id);
+    *u_it = i; //add coinbase transaction to user utxo's
+    u_it ++;
   }
   string prev_block_hash = convert("first_block");
   long time = get_current_time();
@@ -109,8 +107,8 @@ void Blockchain::create_new_block()
   new_block.version = version;
   new_block.merkleroot = get_merkleroot(tx);
   new_block.difficulity_target = difficulity_target;
-  new_block.tx = tx;
-  mine_block(new_block);
+  new_block.tx = tx; // ne updated transactions
+  mine_block(new_block, tx);
 }
 
 Blockchain::block Blockchain::get_best_block() {
@@ -119,7 +117,7 @@ Blockchain::block Blockchain::get_best_block() {
     return best_block;
 }
 
-void Blockchain::mine_block(block new_block)
+void Blockchain::mine_block(block new_block, vector<string> tx)
 {
   string target_hash;
   string prev_hash = new_block.prev_block_hash;
@@ -137,7 +135,11 @@ void Blockchain::mine_block(block new_block)
     cout << check << endl;
     nonce = i;
   }
-  cout << "Target hash: " << convert(target_hash + to_string(nonce)) << " nonce: " << nonce << '\n';
+  update_transactions(tx);
+  new_block.hash = convert(target_hash + to_string(nonce));
+  new_block.nonce = nonce;
+  blockchain.push_back(new_block);
+  cout << "Target hash: " << new_block.hash << " nonce: " << nonce << '\n';
 }
 
 

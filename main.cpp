@@ -11,10 +11,11 @@ int main()
   cin >> user_input;
   Blockchain new_bc;
   generate_users(10, new_bc);
-  new_bc.print_users();
+  
   generate_transactions(1000, new_bc);
   //new_bc.print_transactions();
   new_bc.generate_first_block();
+  new_bc.print_users();
   new_bc.print_block(0);
   new_bc.create_new_block();
   //new_bc.print_block(1);

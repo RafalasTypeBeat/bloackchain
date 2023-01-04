@@ -72,12 +72,12 @@ class Blockchain
     void generate_first_block();
     vector<string> select_transactions(); // perkelti i private
     void create_new_block();
-    void mine_block(block new_block);
+    void mine_block(block new_block, vector<string> tx);
   private:
     vector<block> blockchain;
     vector<user> generated_users;
     vector<transaction> generated_transactions;
-    vector<transaction> coinbase_transactions;
+    vector<transaction> validated_transactions;
     std::mt19937 mt;
     string version = "v1";
     int difficulity_target = 1;
@@ -88,6 +88,6 @@ class Blockchain
     string get_merkleroot(vector<string> transactions);
     vector<string> validate_transaction(vector<string> &tx);
     block get_best_block();
-    int get_user_utx_amount(int &available_funds);
-    
+    int get_user_utx_amount(int available_funds, user current_user);
+    void update_transactions(vector<string> tx);
 };
