@@ -1,16 +1,20 @@
 #include "blockchain.h"
 
-void Blockchain::print_transactions()
+void Blockchain::print_transaction(int index)
 {
-  cout << "Transactions:\n";
-  for (auto t : generated_transactions)
+  cout << "Transactions of block " << index << " :\n";
+  for (auto t : blockchain[index].tx)
   {
-    cout << "Transaction id: "<< t.id << '\n';
-    cout << "From: "<< t.from << '\n';
-    cout << "To: "<< t.to << '\n';
-    cout << "Amount: "<< t.amount << '\n';
-    cout << "Transaction time: "<< t.time << '\n';
-    //cout << u.time_created << '\n';
+    cout << "Transaction id: "<< t << '\n';
+    for (int i = 0; i < validated_transactions.size(); i++)
+    {
+      if (validated_transactions[i].id == t)
+      {
+        cout << "From: "<< validated_transactions[i].from << '\n';
+        cout << "To: "<< validated_transactions[i].to << '\n';
+        cout << "Amount: "<< validated_transactions[i].amount << '\n';
+      }
+    }
   }
 }
 
@@ -46,16 +50,18 @@ vector<string> Blockchain::select_transactions()
     -- tx_amount;
     //cout << "transaction id: " << transaction_it->id << "\n";
   }
+  //cout << "selected transactions\n";
   validate_transaction(selected_tx);
   return selected_tx;
 }
 
-vector<string> Blockchain::validate_transaction(vector<string> &tx)
+vector<string> Blockchain::validate_transaction(vector<string> tx)
 {
   /*
   paimti kiekviena transaction
   paziureti ar useris kuris siuncia transaction turi utxo tiek vertu
   */
+
  auto tx_it = tx.begin();  //track current transaction
  for (auto t : tx)
  {
@@ -64,7 +70,6 @@ vector<string> Blockchain::validate_transaction(vector<string> &tx)
         return find_if_tx.id == t;  //rasti transaction, kad zinotum kuri useri tikrinti
     });
     transaction found_tx = *it_t;
-
     string from_id = found_tx.from;
     auto it_u = find_if(generated_users.begin(), generated_users.end(), [&](const user& find_user)
     {
@@ -73,41 +78,56 @@ vector<string> Blockchain::validate_transaction(vector<string> &tx)
     user found_user_from = *it_u;  //reikalinga, kad galetum paduoti get_user_utx amount useri
 
     int available_funds = 0;
+    //cout << "Calculating money\n";
     available_funds += get_user_utx_amount(available_funds, found_user_from);
-    if (found_tx.amount > available_funds) tx.erase(tx_it);
+    //cout << "available funds: " << available_funds;
+    //cout << " needed funds: " << found_tx.amount << "\n";
+    if (found_tx.amount > available_funds) 
+    {
+      //cout << "erasing tx ";
+      tx.erase(tx_it);
+      cout << "erased tx\n";
+    }
     else tx_it ++;
  }
+ cout << "Validated transactions\n";
  return tx;
 }
 
 void Blockchain::update_transactions(vector<string> tx)
 {
   transaction new_transaction;
+  int collected_amount = 0;
   for (auto t : tx)
   {
+    vector<txo> spent_txo;
     auto it_t = find_if(generated_transactions.begin(), generated_transactions.end(), [&](const transaction& find_tx)
       {
           return t == find_tx.id;  //rasti transaction kad updeitinti
       });
     new_transaction = *it_t; // updatinti sita transaction ir tada istrinti is generated_transactions()
     int amount_needed = new_transaction.amount;
-    int collected_amount = 0;
     // rasti is kurio utxo paimti eurus
+    collected_amount = 0;
     for (int i = 0; i < validated_transactions.size(); i++)
     {
       if (new_transaction.from == validated_transactions[i].to || new_transaction.from == validated_transactions[i].from)
       {
-        for (auto to_utxo : validated_transactions[i].out)
+        //cout << "tx passed first; ";
+        for (auto to_utxo : validated_transactions[i].out) //paimi tx
         {
           vector<txo>::iterator it_used = validated_transactions[i].out.begin();
           if (to_utxo.to == new_transaction.from && to_utxo.unspent == true)
           {
+            //cout << "tx passed second; ";
             collected_amount += to_utxo.amount;
+            //cout << "tx amount:" << collected_amount<< "\n";
+            to_utxo = *it_used;
             to_utxo.unspent = false;
-            *it_used = to_utxo;
-            new_transaction.in.push_back(to_utxo);
-            if (collected_amount > amount_needed) 
+            spent_txo.push_back(to_utxo);
+            if (collected_amount >= amount_needed) 
             {
+              //cout << "tx passed third\n";
               break;
               i = validated_transactions.size();
             }
@@ -116,7 +136,6 @@ void Blockchain::update_transactions(vector<string> tx)
         }
       }
     }
-
     // update transaction in and out txo's
     txo send_txo;
     send_txo.transaction_id = new_transaction.id;
@@ -126,8 +145,10 @@ void Blockchain::update_transactions(vector<string> tx)
     return_utxo.transaction_id = new_transaction.id;
     return_utxo.to = new_transaction.from;
     return_utxo.amount = collected_amount - new_transaction.amount;
+    if (return_utxo.amount < 0) return_utxo.amount += new_transaction.amount;
     new_transaction.out.push_back(send_txo);
     new_transaction.out.push_back(return_utxo);
+    new_transaction.in = spent_txo;
     validated_transactions.push_back(new_transaction);
     generated_transactions.erase(it_t); // is find_if funkcijos pradzioje
   }

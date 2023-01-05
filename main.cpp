@@ -5,21 +5,62 @@ void generate_transactions(int n, Blockchain &new_bc);
 
 int main()
 {
-  string user_input;
-  cout<<"Starting blockchain...";
-  cout << "Comands:\n'Generate first block' - generates users with starting balanaces and random transactions. Puts starting balance utxos in first block and creats it";
-  cin >> user_input;
+  int user_input, index;
   Blockchain new_bc;
-  generate_users(10, new_bc);
-  
-  generate_transactions(1000, new_bc);
-  //new_bc.print_transactions();
-  new_bc.generate_first_block();
-  new_bc.print_users();
-  new_bc.print_block(0);
-  new_bc.create_new_block();
-  //new_bc.print_block(1);
+  //cout<<"Starting blockchain...";
+  cout << "Use numbers for commands: \n*note: you need to generate data and blocks before using other commands.*\n1 'Generate data' - generates users with starting balanaces and random transactions.\n";
+  cout << "2 'Generate blocks' - generates blocks until there are no transactions left.\n";
+  cout << "3 'Print block' - print chosen block.\n";
+  cout << "4 'Print transactions' - print transactions of chosen block.\n";
+  cout << "5 'Print user' - print user by index.\n";
+  cout << "0 'Exit' - exit the program.\n";
+  cin >> user_input;
+  if (user_input != 1 && user_input != 2 && user_input != 3 && user_input != 4 && user_input != 5 && user_input != 0) cout << "\n No such command exists! \n ";
+  while (user_input != 0)
+  {
+
+    if (user_input == 1){
+      generate_users(50, new_bc);
+      generate_transactions(1000, new_bc);
+      cout << "Finished generating users and transactions.\n";
+    }
+    else if (user_input == 2) {
+      cout << "Started mining...\n";
+      new_bc.generate_first_block();
+      new_bc.mine_blocks();
+      cout << "Finished mining blocks.\n";
+    }
+    else if (user_input == 3)
+    {
+      cout << "There are " << new_bc.blockchain_height << " blocks. ";
+      cout << "Type block index: \n";
+      cin >> index;
+      if (index > new_bc.blockchain_height) cout << "No such block exists!\n";
+      else new_bc.print_block(index);
+    }
+    else if (user_input == 4)
+    {
+      cout << "There are " << new_bc.blockchain_height << " blocks. ";
+      cout << "Type block index: \n";
+      cin >> index;
+      if (index > new_bc.blockchain_height) cout << "No such block exists!\n";
+      else new_bc.print_transaction(index);
+    }
+    if (user_input == 5)
+    {
+      cout << "There are " << new_bc.get_user_amount() << " users. ";
+      cout << "Type user index: \n";
+      cin >> index;
+      if (index > new_bc.get_user_amount()) cout << "No such user exists!\n";
+      else new_bc.print_user(index);
+    }
+    cout << "Command executed. Awaiting new command...\n";
+    cin >> user_input;
+    if (user_input != 1 && user_input != 2 && user_input != 3 && user_input != 4 && user_input != 5 && user_input != 0) cout << "\n No such command exists! \n ";
+  }
+  cout << "Program closed\n";
 }
+
 
 void generate_users(int n, Blockchain &new_bc)
 {
